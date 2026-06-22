@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penguin Coder | Career Intelligence & AI Platform</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --bg-color: #030306;
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.55);
+            --glass-bg: rgba(16, 16, 24, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-highlight: rgba(255, 255, 255, 0.12);
+            --accent-gradient: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            --accent-glow: rgba(79, 172, 254, 0.35);
+            --neon-purple: #b338ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        html { scroll-behavior: smooth; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* --- PRELOADER ANIMATION OVERLAY --- */
+        #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-color); display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease, visibility 0.5s ease; }
+        #preloader.hidden { opacity: 0; visibility: hidden; }
+        .loader-container { position: relative; width: 75px; height: 75px; }
+        .glow-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 3px solid transparent; border-top-color: #4facfe; border-right-color: #00f2fe; box-shadow: 0 0 20px var(--accent-glow); animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite; }
+        .glow-ring.inner { width: 66%; height: 66%; top: 17%; left: 17%; border-top-color: transparent; border-right-color: transparent; border-bottom-color: #00f2fe; border-left-color: #4facfe; animation: spin-reverse 1.8s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spin-reverse { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
+
+        /* --- HARDWARE-ACCELERATED AMBIENT BLURS --- */
+        .ambient-orb { position: fixed; z-index: -1; will-change: transform; transform: translateZ(0); animation: float 25s infinite ease-in-out alternate; }
+        .orb-1 { top: -15%; left: -15%; width: 65vw; height: 65vw; background: radial-gradient(circle, rgba(0, 242, 254, 0.1) 0%, rgba(3,3,6,0) 65%); }
+        .orb-2 { bottom: -25%; right: -15%; width: 75vw; height: 75vw; background: radial-gradient(circle, rgba(179, 56, 255, 0.09) 0%, rgba(3,3,6,0) 65%); animation-delay: -6s; }
+        @keyframes float { 0% { transform: translate3d(0, 0, 0) scale(1); } 100% { transform: translate3d(50px, 30px, 0) scale(1.07); } }
+
+        /* --- PREMIUM LIQUID GLASS BOARDS --- */
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--glass-border); border-radius: 24px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5); transition: border-color 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease; }
+
+        /* --- SITE NAVIGATION HEADER --- */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 6vw; background: rgba(3, 3, 6, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); position: fixed; width: 100%; top: 0; z-index: 999; }
+        .brand { font-weight: 700; font-size: 1.4rem; letter-spacing: 2px; background: linear-gradient(to right, #ffffff, var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links a { color: var(--text-main); text-decoration: none; margin-left: 35px; font-size: 0.95rem; transition: color 0.3s; font-weight: 400; }
+        .nav-links a:hover { color: #00f2fe; text-shadow: 0 0 8px var(--accent-glow); }
+
+        /* --- HERO INTRO ENTRY SCREEN --- */
+        .welcome-hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 24px; position: relative; background-image: radial-gradient(rgba(255,255,255,0.015) 1px, transparent 1px); background-size: 32px 32px; }
+        .hero-title-suite h2 { font-size: 1.1rem; font-weight: 600; color: #00f2fe; text-transform: uppercase; letter-spacing: 6px; margin-bottom: 20px; text-shadow: 0 0 10px rgba(0,242,254,0.3); }
+        .hero-title-suite h1 { font-size: 5.5rem; font-weight: 700; line-height: 1.1; margin-bottom: 25px; letter-spacing: -1.5px; background: linear-gradient(180deg, #ffffff 0%, #c7d2fe 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-title-suite p { font-size: 1.25rem; color: var(--text-muted); max-width: 680px; line-height: 1.7; margin: 0 auto 50px auto; font-weight: 300; }
+
+        .control-cluster { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
+        .action-node { padding: 18px 38px; border-radius: 12px; font-size: 1.05rem; font-weight: 500; text-decoration: none; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); letter-spacing: 0.5px; cursor: pointer; }
+        .node-prime { background: var(--text-main); color: #030306; font-weight: 600; border: none; }
+        .node-prime:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(255,255,255,0.15); background: #f0f0f5; }
+        .node-core { background: rgba(255,255,255,0.02); color: var(--text-main); border: 1px solid var(--glass-border); backdrop-filter: blur(10px); }
+        .node-core:hover { border-color: #00f2fe; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0, 242, 254, 0.15); color: #00f2fe; }
+
+        /* --- STRUCTURAL SECTION WRAPPERS --- */
+        .projects-section, .analytics-section, .profile-section { max-width: 1100px; margin: 0 auto 120px auto; padding: 0 24px; scroll-margin-top: 100px; }
+        .section-title { text-align: center; font-size: 2.5rem; margin-bottom: 50px; font-weight: 700; letter-spacing: -0.5px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        .card { display: flex; flex-direction: column; padding: 30px; }
+        .card:hover { border-color: var(--glass-highlight); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
+        .card-title { font-size: 1.35rem; font-weight: 600; display: flex; align-items: center; gap: 12px; }
+        .card-icon { background: rgba(255, 255, 255, 0.04); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--glass-border); }
+
+        .tag { padding: 4px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+        .tag-hot { background: rgba(255, 87, 34, 0.08); color: #ff7043; border: 1px solid rgba(255, 87, 34, 0.18); }
+        .tag-trending { background: rgba(0, 242, 254, 0.08); color: #00f2fe; border: 1px solid rgba(0, 242, 254, 0.18); }
+        .tag-popular { background: rgba(156, 39, 176, 0.08); color: #e040fb; border: 1px solid rgba(156, 39, 176, 0.18); }
+
+        .card-meta { display: flex; gap: 20px; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 18px; }
+        .card-desc { font-size: 0.95rem; line-height: 1.6; color: rgba(255, 255, 255, 0.65); margin-bottom: 24px; flex-grow: 1; font-weight: 300; }
+        
+        .level { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; }
+        .level-dot { width: 7px; height: 7px; border-radius: 50%; }
+        .dot-beginner { background: #4caf50; box-shadow: 0 0 10px #4caf50; }
+        .dot-intermediate { background: #ff9800; box-shadow: 0 0 10px #ff9800; }
+        .dot-advanced { background: #f44336; box-shadow: 0 0 10px #f44336; }
+
+        .card-footer { border-top: 1px solid var(--glass-border); padding-top: 20px; }
+        .card-action { display: flex; justify-content: space-between; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 0.95rem; }
+        .card-action:hover { color: #00f2fe; }
+        .arrow-box { background: rgba(255, 255, 255, 0.04); width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--glass-border); display: flex; justify-content: center; align-items: center; transition: all 0.3s; }
+        .card:hover .arrow-box { transform: translateX(4px); background: rgba(0, 242, 254, 0.15); color: #00f2fe; border-color: rgba(0, 242, 254, 0.3); }
+
+        /* --- ADVANCED ENGINE SEARCH CONSOLE INTERFACE --- */
+        .calc-container { padding: 45px; display: flex; flex-direction: column; gap: 35px; }
+        .search-orchestration-zone { display: flex; flex-direction: column; gap: 16px; background: rgba(0,0,0,0.18); border: 1px solid var(--glass-border); padding: 24px; border-radius: 16px; }
+        .search-row-node { display: flex; gap: 16px; align-items: center; animation: rowFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes rowFadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .search-wrapper-input { position: relative; flex: 1; }
+        .search-icon-embed { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+        
+        .search-bar-input { width: 100%; background: rgba(10, 10, 14, 0.9); color: var(--text-main); border: 1px solid var(--glass-border); padding: 15px 16px 15px 44px; border-radius: 12px; font-size: 1rem; outline: none; transition: all 0.3s; }
+        .search-bar-input:focus { border-color: #00f2fe; box-shadow: 0 0 14px rgba(0,242,254,0.2); background: #08080b; }
+
+        .search-suggestions-drop { position: absolute; left: 0; top: calc(100% + 6px); width: 100%; background: #0c0c10; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; z-index: 99; max-height: 220px; overflow-y: auto; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+        .suggestion-item { padding: 13px 18px; color: rgba(255,255,255,0.85); cursor: pointer; font-size: 0.95rem; transition: all 0.2s; }
+        .suggestion-item:hover { background: rgba(0,242,254,0.12); color: #00f2fe; }
+
+        .btn-remove-node { background: rgba(244, 67, 54, 0.08); color: #f44336; border: 1px solid rgba(244, 67, 54, 0.18); width: 50px; height: 50px; border-radius: 12px; cursor: pointer; font-size: 1.1rem; display: flex; justify-content: center; align-items: center; transition: all 0.2s; }
+        .btn-remove-node:hover { background: rgba(244, 67, 54, 0.16); color: #ff5252; }
+        .btn-add-node { align-self: flex-start; padding: 13px 26px; border-radius: 12px; background: rgba(0, 242, 254, 0.04); color: #00f2fe; border: 1px solid rgba(0, 242, 254, 0.18); font-size: 0.95rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.3s; }
+        .btn-add-node:hover:not(:disabled) { background: rgba(0, 242, 254, 0.12); box-shadow: 0 0 15px rgba(0,242,254,0.1); }
+        .btn-add-node:disabled { opacity: 0.25; cursor: not-allowed; }
+
+        /* Metrics Data Output Monitors */
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .metric-card { background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); border-radius: 16px; padding: 22px; text-align: center; }
+        .metric-val { font-size: 1.8rem; font-weight: 700; color: #00f2fe; margin-top: 6px; text-shadow: 0 0 10px rgba(0, 242, 254, 0.15); }
+        .metric-sub { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; }
+
+        .ratio-section { border: 1px solid var(--glass-border); padding: 25px; border-radius: 16px; background: rgba(0,0,0,0.12); }
+        .ratio-header { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.95rem; }
+        .ratio-bar-bg { width: 100%; background: rgba(255,255,255,0.04); border-radius: 20px; height: 12px; overflow: hidden; }
+        .ratio-bar-fill { height: 100%; background: linear-gradient(90deg, var(--neon-purple), #00f2fe); width: 0%; border-radius: 20px; transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 0 15px var(--accent-glow); }
+
+        /* THE AUTOMATED REAL TIME SORTED LEADERBOARD */
+        .matrix-leaderboard { margin-top: 45px; border-top: 1px solid var(--glass-border); padding-top: 35px; }
+        .matrix-table-wrapper { width: 100%; overflow-x: auto; border-radius: 16px; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--glass-border); }
+        .matrix-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem; min-width: 850px; }
+        .matrix-table th, .matrix-table td { padding: 18px 24px; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        .matrix-table th { background: rgba(255, 255, 255, 0.01); color: var(--text-muted); font-weight: 500; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1.5px; }
+        .matrix-row { transition: background 0.3s; }
+        .matrix-row:hover { background: rgba(255, 255, 255, 0.01); }
+        .matrix-row.rank-1 { background: rgba(0, 242, 254, 0.02); }
+        .matrix-row.rank-1 td { border-bottom: 1px solid rgba(0, 242, 254, 0.15); }
+        .rank-badge { display: inline-block; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-size: 0.85rem; font-weight: 700; background: rgba(255,255,255,0.04); color: var(--text-muted); }
+        .rank-1 .rank-badge { background: var(--accent-gradient); color: #030306; box-shadow: 0 0 12px var(--accent-glow); }
+        .matrix-role-name { font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .matrix-roi-val { font-weight: 700; color: #00f2fe; text-shadow: 0 0 8px rgba(0, 242, 254, 0.15); }
+        .winner-tag { background: rgba(0, 242, 254, 0.08); color: #00f2fe; border: 1px solid rgba(0, 242, 254, 0.2); padding: 2px 10px; border-radius: 4px; font-size: 0.7rem; margin-left: 10px; font-weight: 600; text-transform: uppercase; }
+
+        /* --- DYNAMIC ROADMAP UI --- */
+        .btn-magic-generate { background: var(--accent-gradient); color: #000; padding: 18px 40px; border-radius: 14px; font-weight: 700; font-size: 1.15rem; border: none; cursor: pointer; transition: all 0.3s; box-shadow: 0 5px 20px rgba(0,242,254,0.25); display: inline-block; width: 100%; max-width: 600px;}
+        .btn-magic-generate:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,242,254,0.4); }
+        #roadmap-render-zone { display: none; margin-top: 50px; padding-top: 40px; border-top: 1px solid var(--glass-border); }
+        .progress-card { padding: 30px; border-radius: 16px; margin-bottom: 40px; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); }
+        .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .progress-title { font-size: 1.3rem; font-weight: 600; }
+        .percent { font-size: 2.2rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .progress-bar-container { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--accent-gradient); width: 0%; border-radius: 10px; transition: width 0.6s ease; }
+        .roadmap-zone { position: relative; margin-top: 20px; }
+        .roadmap-zone::before { content: ''; position: absolute; top: 30px; bottom: 30px; left: 24px; width: 2px; background: linear-gradient(to bottom, transparent, var(--glass-highlight), transparent); z-index: 0; }
+        .step { display: flex; margin-bottom: 30px; position: relative; z-index: 1; }
+        .step-number { width: 50px; height: 50px; background: rgba(10,10,14,0.9); border: 1px solid var(--glass-highlight); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 600; margin-right: 30px; flex-shrink: 0; }
+        .step-content { flex: 1; border-radius: 16px; background: rgba(20, 20, 24, 0.4); border: 1px solid var(--glass-border); overflow: hidden; }
+        .step-header { padding: 20px 25px; display: flex; justify-content: space-between; cursor: pointer; background: rgba(255,255,255,0.02); }
+        .step-title { font-weight: 500; font-size: 1.1rem; }
+        .step-body { padding: 0 25px 25px 25px; display: none; }
+        .step-body.active { display: block; }
+        .task { display: flex; align-items: center; margin-top: 15px; font-size: 0.95rem; color: var(--text-muted); cursor: pointer; }
+        .task input[type="checkbox"] { appearance: none; width: 20px; height: 20px; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 50%; margin-right: 15px; cursor: pointer; position: relative; }
+        .task input[type="checkbox"]:checked { background: var(--accent-gradient); border-color: transparent; }
+        .task input[type="checkbox"]:checked::after { content: '✓'; position: absolute; color: #000; font-size: 12px; font-weight: 700; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .loader-ring { width: 40px; height: 40px; border: 4px solid rgba(0, 242, 254, 0.2); border-top-color: #00f2fe; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+
+        /* --- AI ORACLE CHAT TERMINAL --- */
+        .ai-chat-container { padding: 40px; display: flex; flex-direction: column; gap: 24px; margin-top: 60px; scroll-margin-top: 100px; border-top: 1px solid var(--glass-border); padding-top: 50px;}
+        .ai-vault-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px; }
+        .ai-key-input-wrapper { display: flex; gap: 10px; align-items: center; }
+        .ai-key-field { background: rgba(10, 10, 14, 0.8); border: 1px solid var(--glass-border); color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 0.85rem; width: 250px; outline: none; }
+        .ai-key-field:focus { border-color: #4facfe; }
+        .ai-log-screen { background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); height: 350px; border-radius: 14px; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+        .chat-bubble { max-width: 80%; padding: 14px 20px; border-radius: 16px; line-height: 1.5; font-size: 0.95rem; font-weight: 300; word-wrap: break-word; }
+        .bubble-bot { background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); color: #fff; align-self: flex-start; border-top-left-radius: 4px; }
+        .bubble-user { background: var(--accent-gradient); color: #030306; align-self: flex-end; border-top-right-radius: 4px; font-weight: 500; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.2); }
+        .ai-chat-form { display: flex; gap: 14px; }
+        .chat-input-node { flex: 1; background: rgba(10, 10, 14, 0.9); border: 1px solid var(--glass-border); color: #fff; padding: 16px; border-radius: 12px; outline: none; font-size: 1rem; }
+        .chat-input-node:focus { border-color: #00f2fe; }
+        .btn-chat-send { background: var(--text-main); color: #030306; border: none; padding: 0 30px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.3s; }
+        .btn-chat-send:hover { background: #e0e0e5; transform: translateY(-2px); }
+
+        /* --- BIOGRAPHY PROTOCOL --- */
+        .profile-card { display: flex; align-items: center; gap: 45px; padding: 45px; background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.005) 100%); }
+        .avatar-frame { position: relative; width: 135px; height: 135px; flex-shrink: 0; border-radius: 50%; padding: 4px; background: var(--accent-gradient); box-shadow: 0 0 25px var(--accent-glow); }
+        .avatar-img { width: 100%; height: 100%; border-radius: 50%; background: #0f0f12; object-fit: cover; display: block; border: 2px solid #030306; }
+        .profile-details h3 { font-size: 1.8rem; font-weight: 700; margin-bottom: 6px; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .profile-tag { font-size: 0.85rem; color: #00f2fe; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; margin-bottom: 14px; }
+        .profile-bio { color: var(--text-muted); font-size: 1rem; line-height: 1.7; font-weight: 300; }
+
+        /* --- BASE LEVEL DESIGN FOOTER --- */
+        .glass-footer { margin-top: auto; padding: 45px 24px 24px; background: rgba(10, 10, 12, 0.5); backdrop-filter: blur(12px); border-top: 1px solid var(--glass-border); text-align: center; }
+        .footer-brand { font-weight: 700; font-size: 1.5rem; letter-spacing: 2px; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 22px; }
+        .footer-bottom { font-size: 0.85rem; color: var(--text-muted); border-top: 1px solid rgba(255, 255, 255, 0.04); padding-top: 22px; }
+
+        @media (max-width: 768px) {
+            .hero-title-suite h1 { font-size: 3.2rem; }
+            .nav-links { display: none; }
+            .calc-container, .ai-chat-container { padding: 25px 20px; }
+            .profile-card { flex-direction: column; text-align: center; padding: 35px 20px; gap: 24px; }
+            .ai-vault-header { flex-direction: column; align-items: flex-start; }
+            .ai-key-field { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="preloader">
+        <div class="loader-container">
+            <div class="glow-ring"></div>
+            <div class="glow-ring inner"></div>
+        </div>
+    </div>
+
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+
+    <nav>
+        <div class="brand">PENGUIN // CODER</div>
+        <div class="nav-links">
+            <a href="#paths-grid">Career Paths</a>
+            <a href="#matrix-optimizer">Intelligence Matrix</a>
+        </div>
+    </nav>
+
+    <section class="welcome-hero">
+        <div class="hero-title-suite">
+            <h2>Welcome to Shape Your Career</h2>
+            <h1>Forge Your Digital Tech Legacy.</h1>
+            <p>Deconstruct industry career fields, access structural development maps, and calculate your absolute resource efficiency.</p>
+        </div>
+        <div class="control-cluster">
+            <a href="#paths-grid" class="action-node node-prime">Let's Shape Your Career</a>
+            <a href="#matrix-optimizer" class="action-node node-core">Know Which Path is for You</a>
+        </div>
+    </section>
+
+    <section id="paths-grid" class="projects-section">
+        <h2 class="section-title">Explore Open Curriculum Tracks</h2>
+        <div class="grid">
+            
+            <div class="card glass-panel">
+                <div class="card-header">
+                    <div class="card-title"><span class="card-icon">🐍</span> Python PRO</div>
+                    <div class="tag tag-trending">Trending</div>
+                </div>
+                <div class="card-meta"><span>⏱️ 4-6 weeks</span><span>👥 12K+ Engineers</span></div>
+                <p class="card-desc">The definitive learning path. Track your progress through core loops, OOP architectures, APIs, and micro-automation scripts.</p>
+                <div class="level"><span class="level-dot dot-beginner"></span> Beginner Friendly</div>
+                <div class="card-footer">
+                    <a href="python_Roadmap.html" class="card-action">Start Learning Track<div class="arrow-box">→</div></a>
+                </div>
+            </div>
+
+            <div class="card glass-panel">
+                <div class="card-header">
+                    <div class="card-title"><span class="card-icon">💻</span> Full Stack</div>
+                    <div class="tag tag-popular">Popular</div>
+                </div>
+                <div class="card-meta"><span>⏱️ 6-9 months</span><span>👥 150K+ Engineers</span></div>
+                <p class="card-desc">Build complete responsive web engines from front to back. Master core DOM structure markup, modern CSS layouts, and full servers.</p>
+                <div class="level"><span class="level-dot dot-beginner"></span> Beginner Friendly</div>
+                <div class="card-footer">
+                    <a href="webdev_roadmap.html" class="card-action">Start Learning Track<div class="arrow-box">→</div></a>
+                </div>
+            </div>
+
+            <div class="card glass-panel">
+                <div class="card-header">
+                    <div class="card-title"><span class="card-icon">{ }</span> DSA Core</div>
+                    <div class="tag tag-hot">Hot</div>
+                </div>
+                <div class="card-meta"><span>⏱️ 3-6 months</span><span>👥 85K+ Engineers</span></div>
+                <p class="card-desc">Master advanced Data Structures and Algorithmic optimization matrices. The fundamental key to passing competitive FAANG interviews.</p>
+                <div class="level"><span class="level-dot dot-intermediate"></span> Intermediate</div>
+                <div class="card-footer">
+                    <a href="#" class="card-action">Under Construction<div class="arrow-box">→</div></a>
+                </div>
+            </div>
+
+            <div class="card glass-panel">
+                <div class="card-header">
+                    <div class="card-title"><span class="card-icon">🧠</span> AI & ML</div>
+                    <div class="tag tag-hot">Hot</div>
+                </div>
+                <div class="card-meta"><span>⏱️ 8-12 months</span><span>👥 45K+ Engineers</span></div>
+                <p class="card-desc">Dive deep into statistical matrix computing parameters, specialized predictive modeling configurations, and dense neural network systems.</p>
+                <div class="level"><span class="level-dot dot-advanced"></span> Advanced</div>
+                <div class="card-footer">
+                    <a href="#" class="card-action">Under Construction<div class="arrow-box">→</div></a>
+                </div>
+            </div>
+
+            <div class="card glass-panel">
+                <div class="card-header">
+                    <div class="card-title"><span class="card-icon">📊</span> Data Science</div>
+                    <div class="tag tag-popular">Popular</div>
+                </div>
+                <div class="card-meta"><span>⏱️ 6-10 months</span><span>👥 90K+ Engineers</span></div>
+                <p class="card-desc">Parse large raw datasets safely to map mathematical trends, clean metrics, and configure analytical databases for corporate pipelines.</p>
+                <div class="level"><span class="level-dot dot-intermediate"></span> Intermediate</div>
+                <div class="card-footer">
+                    <a href="#" class="card-action">Under Construction<div class="arrow-box">→</div></a>
+                </div>
+            </div>
+
+            <div class="card glass-panel">
+                <div class="card-header">
+                    <div class="card-title"><span class="card-icon">⚙️</span> DevOps</div>
+                    <div class="tag tag-trending">Trending</div>
+                </div>
+                <div class="card-meta"><span>⏱️ 5-8 months</span><span>👥 30K+ Engineers</span></div>
+                <p class="card-desc">Bridge the execution loop between systems management and active development. Track CI/CD builds, Docker nodes, and cloud systems.</p>
+                <div class="level"><span class="level-dot dot-advanced"></span> Advanced</div>
+                <div class="card-footer">
+                    <a href="#" class="card-action">Under Construction<div class="arrow-box">→</div></a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="matrix-optimizer" class="analytics-section">
+        <h2 class="section-title">Career Intelligence Engine</h2>
+        
+        <div class="calc-container glass-panel">
+
+            <div class="ai-vault-header">
+                <div>
+                    <h3 style="font-weight: 500; font-size: 1.4rem;">Job Path Optimizer Terminal (Indian Market Core)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; font-weight: 300;">Type any global job path, tech sector, or regional role below. Calculations adapt instantly to <b>₹ LPA</b> models.</p>
+                </div>
+                <div>
+                    <input type="password" id="api-key-vault" class="ai-key-field" placeholder="Paste Free Gemini API Key here...">
+                </div>
+            </div>
+
+            <div class="search-orchestration-zone">
+                <div id="search-fields-container" style="display: flex; flex-direction: column; gap: 14px;">
+                    </div>
+                <button id="add-search-btn" class="btn-add-node" onclick="addNewSearchRow()">
+                    <span>+</span> Add Custom Path Target (Up to 5 slots)
+                </button>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-sub">Combined Salary (Mean Scale)</div>
+                    <div class="metric-val" id="m-salary">₹0 LPA</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-sub">Average Training Target</div>
+                    <div class="metric-val" id="m-time">0 Mos</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-sub">Aggregated Market Competition</div>
+                    <div class="metric-val" id="m-comp">Clear</div>
+                </div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-sub">Entry Selection Friction</div>
+                    <div class="metric-val" id="m-diff-get" style="color: #e040fb;">0/10</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-sub">Day-to-Day Execution Work Load</div>
+                    <div class="metric-val" id="m-diff-do" style="color: #e040fb;">0/10</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-sub">Cumulative Preparation Multiplier</div>
+                    <div class="metric-val" id="m-total-work" style="color: #ffba08;">0/20</div>
+                </div>
+            </div>
+
+            <div class="ratio-section">
+                <div class="ratio-header">
+                    <span style="font-weight: 400; color: var(--text-muted);">Current Active Selection Return Efficiency Ratio (ROI)</span>
+                    <span id="ratio-score" style="font-weight: 600; color: #00f2fe;">0.00 Efficiency Index</span>
+                </div>
+                <div class="ratio-bar-bg">
+                    <div class="ratio-bar-fill" id="ratio-bar-fill"></div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0 10px; padding-top: 30px; border-top: 1px solid var(--glass-border);">
+                <p style="color: var(--text-muted); margin-bottom: 15px; font-size: 0.95rem;">Ready to execute your selected track?</p>
+                <button class="btn-magic-generate" onclick="generateAILearningRoadmap()">
+                    🪄 How to become a <span id="btn-dynamic-role">Professional</span>? <br><span style="font-size: 0.85rem; font-weight: 400;">(Generate Custom Learning Roadmap)</span>
+                </button>
+            </div>
+
+            <div id="roadmap-render-zone"></div>
+
+            <div class="matrix-leaderboard">
+                <h4 style="font-weight: 500; font-size: 1.2rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    📊 Side-by-Side Path Efficiency Standings Ledger
+                </h4>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; font-weight: 300;">
+                    Your inputs are processed and calculated concurrently below, sorted from mathematically optimal resource layouts down.
+                </p>
+                
+                <div class="matrix-table-wrapper">
+                    <table class="matrix-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Queried Career Path</th>
+                                <th>Avg Salary (INR)</th>
+                                <th>Prep Window</th>
+                                <th>Competition</th>
+                                <th>Get/Do Diff</th>
+                                <th>Total Effort</th>
+                                <th>Efficiency Index (ROI)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="matrix-leaderboard-body">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="ai-oracle" class="ai-chat-container">
+                <div style="margin-bottom: 20px;">
+                    <h3 style="font-weight: 500; font-size: 1.4rem; color: #00f2fe; text-shadow: 0 0 10px rgba(0,242,254,0.2);">🔮 Gemini AI Career Oracle</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; font-weight: 300; margin-top: 4px;">Consult Penguin Coder's live embedded AI agent for personalized market evaluations. (Requires API Key in top vault).</p>
+                </div>
+
+                <div id="chat-screen-logs" class="ai-log-screen">
+                    <div class="chat-bubble bubble-bot">
+                        Greetings! I am the synchronized Gemini Career Oracle Core. Paste your free Google AI Studio key inside the portal config box at the top of this dashboard, then type any request regarding tech trajectories, syllabus sequences, or Indian corporate wage metrics below.
+                    </div>
+                </div>
+
+                <div class="ai-chat-form">
+                    <input type="text" id="chat-user-prompt" class="chat-input-node" placeholder="Ask about salaries, degrees, comparisons, or exam prep profiles..." onkeypress="handleChatEnter(event)">
+                    <button class="btn-chat-send" onclick="sendPromptToGeminiOracle()">Query AI</button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="profile-section">
+        <div class="profile-card glass-panel">
+            <div class="avatar-frame">
+                <img src="photo_2026-03-27_06-22-17.jpg" alt="Penguin Coder" class="avatar-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 100 100\'><rect width=\'100%\' height=\'100%\' fill=\'%230b0b0e\'/><text x=\'50%\' y=\'57%\' font-family=\'sans-serif\' font-size=\'34\' fill=\'%23444\' text-anchor=\'middle\'>🐧</text></svg>'">
+            </div>
+            <div class="profile-details">
+                <h3>Penguin Coder</h3>
+                <div class="profile-tag">Lead Platform Architect</div>
+                <p class="profile-bio">
+                    Welcome to my sandbox. I am a software development student, builder, and tech enthusiast tracking career metrics and structural programming tracks. This platform is my live command dashboard for software masterclasses. Follow along as I scale computing blueprints from absolute baseline protocols to expert execution.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="glass-footer">
+        <div class="footer-brand">PENGUIN // CODER</div>
+        <div class="footer-bottom">
+            &copy; 2026 Penguin Coder. Built with ☕ and Code.
+        </div>
+    </footer>
+
+    <script>
+        // --- Preloader closer ---
+        window.addEventListener('load', () => { setTimeout(() => { document.getElementById('preloader').classList.add('hidden'); }, 600); });
+
+        // --- EXPANDED MASSIVE LOCAL INDIAN DATABASE (Vetted Values in ₹ LPA) ---
+        const careerData = {
+            "python pro / backend": { salaryLPA: 8.5, timeValue: 6, timeDisplay: "4-6 Mos", competition: "Moderate", diffGet: 5, diffDo: 6, icon: "🐍", desc: "Strong Indian startup and product sector demands." },
+            "software engineer (dsa)": { salaryLPA: 18.0, timeValue: 12, timeDisplay: "6-12 Mos", competition: "Extreme", diffGet: 9, diffDo: 7, icon: "🎯", desc: "Top compensation brackets across tier-1 product lines." },
+            "full stack web developer": { salaryLPA: 7.5, timeValue: 8, timeDisplay: "6-9 Mos", competition: "High", diffGet: 6, diffDo: 6, icon: "🌐", desc: "Massive market volume listings." },
+            "ai & machine learning engineer": { salaryLPA: 15.5, timeValue: 12, timeDisplay: "8-12 Mos", competition: "High", diffGet: 9, diffDo: 8, icon: "🧠", desc: "Premium payroll layout parameters." },
+            "data scientist": { salaryLPA: 11.0, timeValue: 9, timeDisplay: "6-10 Mos", competition: "Moderate", diffGet: 7, diffDo: 7, icon: "📊", desc: "Combines big data transformations." },
+            "devops architect": { salaryLPA: 12.5, timeValue: 8, timeDisplay: "6-9 Mos", competition: "Low-Medium", diffGet: 8, diffDo: 8, icon: "⚙️", desc: "Systems automation expert." },
+            "medical doctor / physician": { salaryLPA: 16.0, timeValue: 120, timeDisplay: "8-11 Yrs", competition: "Extreme", diffGet: 10, diffDo: 9, icon: "🥼", desc: "Stellar long-term financial security index." },
+            "school teacher": { salaryLPA: 4.5, timeValue: 24, timeDisplay: "2-3 Yrs (B.Ed)", competition: "High", diffGet: 5, diffDo: 5, icon: "🏫", desc: "Essential structural framework development role." },
+            "university professor": { salaryLPA: 10.5, timeValue: 60, timeDisplay: "5-7 Yrs (PhD)", competition: "High", diffGet: 8, diffDo: 6, icon: "🎓", desc: "Academic research orientation track." },
+            "civil servant (upsc / ias)": { salaryLPA: 11.5, timeValue: 36, timeDisplay: "2-4 Yrs Prep", competition: "Extreme", diffGet: 10, diffDo: 8, icon: "🏛️", desc: "Premium national governance administration role." },
+            "bank po / clerk": { salaryLPA: 6.5, timeValue: 18, timeDisplay: "1-2 Yrs Prep", competition: "Extreme", diffGet: 7, diffDo: 6, icon: "🏦", desc: "High competitive applicant density across public banks." },
+            "electrical engineer": { salaryLPA: 5.5, timeValue: 48, timeDisplay: "4 Yrs (B.Tech)", competition: "Moderate", diffGet: 6, diffDo: 7, icon: "⚡", desc: "Deals directly with electrical machinery layout tracking." },
+            "mechanical engineer": { salaryLPA: 5.2, timeValue: 48, timeDisplay: "4 Yrs (B.Tech)", competition: "Moderate", diffGet: 6, diffDo: 7, icon: "🔧", desc: "Traditional industrial production line mapping." },
+            "cybersecurity specialist": { salaryLPA: 9.5, timeValue: 7, timeDisplay: "5-8 Mos", competition: "High", diffGet: 7, diffDo: 7, icon: "🛡️", desc: "Rapid corporate expansion tracking network perimeters." },
+            "ui/ux product designer": { salaryLPA: 6.8, timeValue: 6, timeDisplay: "4-7 Mos", competition: "High", diffGet: 5, diffDo: 6, icon: "🎨", desc: "Focuses heavily on customer interaction flows." }
+        };
+
+        let activeQueryStrings = ["school teacher", "electrical engineer"];
+
+        // --- NATIVE LEVENSHTEIN STRING DISTANCE TYPO CORRECTOR ---
+        function getFuzzyDistanceMatch(s, t) {
+            const a = s.toLowerCase().trim(); const b = t.toLowerCase().trim();
+            if (a === b) return 0; if (a.length === 0) return b.length; if (b.length === 0) return a.length;
+            let matrix = []; for (let i = 0; i <= b.length; i++) matrix[i] = [i]; for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+            for (let i = 1; i <= b.length; i++) {
+                for (let j = 1; j <= a.length; j++) {
+                    if (b.charAt(i - 1) === a.charAt(j - 1)) matrix[i][j] = matrix[i - 1][j - 1];
+                    else matrix[i][j] = Math.min(matrix[i - 1][j - 1] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j] + 1);
+                }
+            } return matrix[b.length][a.length];
+        }
+
+        // --- HEURISTIC REGIONAL PREDICTION SYNTHESIZER ---
+        function parseRoleMetrics(rawStringInput) {
+            const query = rawStringInput.trim().toLowerCase();
+            if(!query) return null;
+
+            let targetKey = null; let minDistance = 999;
+            for (let registeredKey in careerData) {
+                const distance = getFuzzyDistanceMatch(query, registeredKey);
+                if (distance < minDistance) { minDistance = distance; targetKey = registeredKey; }
+            }
+            if (targetKey && minDistance <= Math.max(3, Math.floor(query.length * 0.4))) {
+                return { ...careerData[targetKey], resolvedName: targetKey.toUpperCase() };
+            }
+
+            let generatedSalaryLPA = 5.0; let prepDisplay = "6 Mos"; let prepVal = 6;
+            let competitionIndex = "Moderate"; let difficultyGet = 5; let difficultyDo = 5; let adaptiveIcon = "💼";
+
+            if (/\b(doctor|physician|surgeon|dentist|mbbs|md|medical|cardiologist)\b/.test(query)) { generatedSalaryLPA = 15.0; difficultyGet = 10; difficultyDo = 9; adaptiveIcon = "🥼"; prepDisplay = "8-11 Yrs"; prepVal = 120; competitionIndex = "Extreme"; } 
+            else if (/\b(teacher|school|faculty|b\.ed|primary|secondary|teaching|lecturer)\b/.test(query)) { generatedSalaryLPA = 4.2; difficultyGet = 5; difficultyDo = 5; adaptiveIcon = "🏫"; prepDisplay = "2 Yrs"; prepVal = 24; competitionIndex = "High"; } 
+            else if (/\b(professor|phd|academic|dean|university)\b/.test(query)) { generatedSalaryLPA = 9.5; difficultyGet = 8; difficultyDo = 6; adaptiveIcon = "🎓"; prepDisplay = "5 Yrs"; prepVal = 60; competitionIndex = "High"; } 
+            else if (/\b(upsc|ias|ips|civil|govt|government|ssc|cgl)\b/.test(query)) { generatedSalaryLPA = 11.0; difficultyGet = 10; difficultyDo = 8; adaptiveIcon = "🏛️"; prepDisplay = "2-4 Yrs"; prepVal = 36; competitionIndex = "Extreme"; } 
+            else if (/\b(bank|po|clerk|rbi|sbi|ibps|finance|accountant)\b/.test(query)) { generatedSalaryLPA = 6.0; difficultyGet = 7; difficultyDo = 6; adaptiveIcon = "🏦"; prepDisplay = "1-2 Yrs"; prepVal = 18; competitionIndex = "Extreme"; } 
+            else if (/\b(ai|ml|learning|intelligence|data|scientist|analytics)\b/.test(query)) { generatedSalaryLPA = 14.0; difficultyGet = 9; difficultyDo = 8; adaptiveIcon = "🧠"; prepDisplay = "8-12 Mos"; prepVal = 11; competitionIndex = "High"; } 
+            else if (/\b(cyber|security|security|hacking|network)\b/.test(query)) { generatedSalaryLPA = 9.0; difficultyGet = 7; difficultyDo = 7; adaptiveIcon = "🛡️"; prepDisplay = "5-8 Mos"; prepVal = 7; competitionIndex = "High"; } 
+            else if (/\b(developer|coder|programmer|software|web|fullstack|backend)\b/.test(query)) { generatedSalaryLPA = 7.0; difficultyGet = 6; difficultyDo = 6; adaptiveIcon = "💻"; prepDisplay = "6-9 Mos"; prepVal = 8; } 
+            else if (/\b(engineer|engineering|mechanical|electrical|civil|b\.tech)\b/.test(query)) { generatedSalaryLPA = 5.2; difficultyGet = 6; difficultyDo = 7; adaptiveIcon = "⚙️"; prepDisplay = "4 Yrs"; prepVal = 48; }
+
+            if (/\b(senior|lead|architect|manager|head|director|ceo)\b/.test(query)) { generatedSalaryLPA += 6.5; difficultyGet = Math.min(difficultyGet + 2, 10); difficultyDo = Math.min(difficultyDo + 1, 10); } 
+            else if (/\b(junior|fresher|intern|trainee|entry)\b/.test(query)) { generatedSalaryLPA = Math.max(generatedSalaryLPA - 2.5, 3.0); competitionIndex = "High"; difficultyGet = Math.max(difficultyGet - 1, 3); }
+
+            const formattedTitleString = query.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+            return { salaryLPA: generatedSalaryLPA, timeValue: prepVal, timeDisplay: prepDisplay, competition: competitionIndex, diffGet: difficultyGet, diffDo: difficultyDo, title: `${formattedTitleString} Configuration Matrix`, desc: "Algorithmic profile optimization loaded.", icon: adaptiveIcon, resolvedName: query.toUpperCase() };
+        }
+
+        // --- CONSOLE ELEMENT DRAW CYCLES ---
+        function drawSearchConsole() {
+            const container = document.getElementById('search-fields-container');
+            container.innerHTML = "";
+            activeQueryStrings.forEach((textString, idx) => {
+                const uniqueNodeId = `search-node-${idx}`;
+                const htmlRow = `
+                    <div class="search-row-node" id="row-${uniqueNodeId}">
+                        <div class="search-wrapper-input">
+                            <span class="search-icon-embed">🔍</span>
+                            <input type="text" id="input-${uniqueNodeId}" class="search-bar-input" value="${textString}" placeholder="Type any Indian profession (e.g. Teacher, Civil Servant, Bank PO...)" autocomplete="off" onfocus="triggerSuggestionsView('${uniqueNodeId}')" onblur="triggerSuggestionsHide('${uniqueNodeId}')" oninput="handleSearchInputChange('${uniqueNodeId}', ${idx})">
+                            <div id="drop-${uniqueNodeId}" class="search-suggestions-drop">
+                                ${Object.keys(careerData).map(key => `<div class="suggestion-item" onmousedown="selectConsoleSuggestion('${uniqueNodeId}', '${key}', ${idx})">${careerData[key].icon} ${key.toUpperCase()}</div>`).join('')}
+                            </div>
+                        </div>
+                        ${activeQueryStrings.length > 1 ? `<button class="btn-remove-node" onclick="removeConsoleRow(${idx})">✕</button>` : ''}
+                    </div>
+                `;
+                container.innerHTML += htmlRow;
+            });
+            document.getElementById('add-search-btn').disabled = activeQueryStrings.length >= 5;
+            executeMatrixCalculations();
+        }
+
+        function handleSearchInputChange(nodeId, arrayIndex) {
+            const value = document.getElementById(`input-${nodeId}`).value;
+            activeQueryStrings[arrayIndex] = value;
+            const drop = document.getElementById(`drop-${nodeId}`);
+            const queryText = value.toLowerCase().trim();
+            const items = drop.getElementsByClassName('suggestion-item');
+            let counter = 0;
+            for(let item of items) {
+                if(item.innerText.toLowerCase().includes(queryText)) { item.style.display = "block"; counter++; }
+                else { item.style.display = "none"; }
+            }
+            drop.style.display = (counter > 0 && queryText.length > 0) ? "block" : "none";
+            executeMatrixCalculations();
+        }
+
+        function selectConsoleSuggestion(nodeId, key, index) { activeQueryStrings[index] = key; drawSearchConsole(); }
+        function addNewSearchRow() { if(activeQueryStrings.length < 5) { activeQueryStrings.push("civil servant (upsc / ias)"); drawSearchConsole(); } }
+        function removeConsoleRow(idx) { if(activeQueryStrings.length > 1) { activeQueryStrings.splice(idx, 1); drawSearchConsole(); } }
+        function triggerSuggestionsView(id) { const value = document.getElementById(`input-${id}`).value.trim(); if(value.length > 0) document.getElementById(`drop-${id}`).style.display = "block"; }
+        function triggerSuggestionsHide(id) { setTimeout(() => { const target = document.getElementById(`drop-${id}`); if(target) target.style.display = "none"; }, 200); }
+
+        // --- METRICS PROCESSING MATH LOOPS ---
+        function executeMatrixCalculations() {
+            let parsedObjects = activeQueryStrings.map(str => parseRoleMetrics(str)).filter(Boolean);
+            if(parsedObjects.length === 0) return;
+
+            let cumulativeSalaryLPA = 0; let cumulativeTime = 0;
+            let combinedGetDiff = 0; let combinedDoDiff = 0;
+            let competitionList = [];
+
+            parsedObjects.forEach(obj => {
+                cumulativeSalaryLPA += obj.salaryLPA; cumulativeTime += obj.timeValue;
+                combinedGetDiff += obj.diffGet; combinedDoDiff += obj.diffDo;
+                competitionList.push(obj.competition);
+            });
+
+            const totalActiveRows = parsedObjects.length;
+            const meanSalary = cumulativeSalaryLPA / totalActiveRows;
+            const meanCombinedEffort = (combinedGetDiff + combinedDoDiff) / totalActiveRows;
+            const compositeRoi = ((meanSalary * 10) / meanCombinedEffort).toFixed(2);
+            const fillRatio = Math.min((compositeRoi / 15) * 100, 100);
+
+            let calculatedCompVerdict = "Moderate";
+            if(competitionList.includes("Extreme")) calculatedCompVerdict = "Extreme";
+            else if(competitionList.includes("High")) calculatedCompVerdict = "High";
+            else if(competitionList.includes("Moderate")) calculatedCompVerdict = "Moderate";
+            else calculatedCompVerdict = "Low-Medium";
+
+            document.getElementById('m-salary').innerText = `₹ ${meanSalary.toFixed(1)} LPA`;
+            if((cumulativeTime / totalActiveRows) >= 12) { document.getElementById('m-time').innerText = `~ ${((cumulativeTime / totalActiveRows) / 12).toFixed(1)} Yrs Scale`; } 
+            else { document.getElementById('m-time').innerText = `~ ${(cumulativeTime / totalActiveRows).toFixed(1)} Mos Scale`; }
+            
+            document.getElementById('m-comp').innerText = calculatedCompVerdict;
+            const compColorNode = document.getElementById('m-comp');
+            if(calculatedCompVerdict === "Extreme" || calculatedCompVerdict === "High") compColorNode.style.color = "#f44336";
+            else if(calculatedCompVerdict === "Moderate") compColorNode.style.color = "#ff9800";
+            else compColorNode.style.color = "#4caf50";
+
+            document.getElementById('m-diff-get').innerText = `${(combinedGetDiff / totalActiveRows).toFixed(1)}/10`;
+            document.getElementById('m-diff-do').innerText = `${(combinedDoDiff / totalActiveRows).toFixed(1)}/10`;
+            document.getElementById('m-total-work').innerText = `${meanCombinedEffort.toFixed(1)}/20`;
+            document.getElementById('ratio-score').innerText = `${compositeRoi} Efficiency Index Score`;
+            document.getElementById('ratio-bar-fill').style.width = `${fillRatio}%`;
+
+            // Update Dynamic Roadmap Button Target
+            document.getElementById('btn-dynamic-role').innerText = parsedObjects[0].resolvedName;
+
+            const matrixBody = document.getElementById('matrix-leaderboard-body');
+            matrixBody.innerHTML = "";
+
+            let constructedRowDataList = parsedObjects.map(obj => {
+                const finalEffortMultiplierSum = obj.diffGet + obj.diffDo;
+                return {
+                    name: obj.resolvedName, icon: obj.icon, salaryText: `₹ ${obj.salaryLPA.toFixed(1)} LPA`,
+                    timeText: obj.timeDisplay, competitionText: obj.competition, getDoRatioText: `${obj.diffGet}/${obj.diffDo}`,
+                    totalWorkScale: finalEffortMultiplierSum, roiValue: ((obj.salaryLPA * 10) / finalEffortMultiplierSum)
+                };
+            });
+
+            constructedRowDataList.sort((a, b) => b.roiValue - a.roiValue);
+            constructedRowDataList.forEach((row, positioningIdx) => {
+                const rank = positioningIdx + 1;
+                const winnerTag = rank === 1 ? '<span class="winner-tag">Optimal ROI</span>' : '';
+                const cssRowClass = rank === 1 ? 'matrix-row rank-1' : 'matrix-row';
+                const tableRowHTML = `
+                    <tr class="${cssRowClass}">
+                        <td><div class="rank-badge">${rank}</div></td>
+                        <td><div class="matrix-role-name"><span>${row.icon}</span> ${row.name} ${winnerTag}</div></td>
+                        <td>${row.salaryText}</td>
+                        <td>${row.timeText}</td>
+                        <td>${row.competitionText}</td>
+                        <td>${row.getDoRatioText}</td>
+                        <td>${row.totalWorkScale}/20</td>
+                        <td><span class="matrix-roi-val">${row.roiValue.toFixed(2)}</span></td>
+                    </tr>
+                `;
+                matrixBody.innerHTML += tableRowHTML;
+            });
+        }
+
+        // ==========================================
+        // THE AI MANAGER AUTOMATED ROADMAP GENERATOR
+        // ==========================================
+        async function generateAILearningRoadmap() {
+            const key = document.getElementById('api-key-vault').value.trim();
+            const targetRole = document.getElementById('btn-dynamic-role').innerText;
+            const zone = document.getElementById('roadmap-render-zone');
+
+            zone.style.display = 'block';
+            zone.innerHTML = `
+                <div style="text-align:center; padding: 50px;">
+                    <div class="loader-ring"></div>
+                    <h3 style="color: #00f2fe; margin-bottom: 10px;">[AI Manager System Activated]</h3>
+                    <p style="color: var(--text-muted);">Please wait. Compiling a highly specific 5-stage HTML learning syllabus for <b>"${targetRole}"</b> dynamically from the server...</p>
+                </div>
+            `;
+            zone.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            let syllabusData = [];
+
+            if(key) {
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
+                        method: "POST", headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: `Act as a senior career architect. Generate a 5-step learning roadmap for a ${targetRole} specific to the Indian market. Return ONLY a raw JSON array of objects. Each object must have a "title" (string) and "tasks" (array of exactly 4 actionable short string instructions). Example format: [{"title":"1. Basics", "tasks":["Task A", "Task B", "Task C", "Task D"]}]` }] }],
+                            generationConfig: { responseMimeType: "application/json" }
+                        })
+                    });
+                    const data = await response.json();
+                    syllabusData = JSON.parse(data.candidates[0].content.parts[0].text);
+                } catch(e) { console.log("AI Generation skipped. Using fallback array."); }
+            }
+
+            if(syllabusData.length === 0) {
+                syllabusData = [
+                    { title: "1. Core Foundations & Environment", tasks: [`Understand basics of ${targetRole}`, "Setup required software and study tools", "Analyze market expectations in India", "Study base terminology"] },
+                    { title: "2. Beginner Execution", tasks: ["Complete initial beginner theory modules", "Build a \"Hello World\" level introductory project", "Join community forums or study groups", "Review standard documentation"] },
+                    { title: "3. Intermediate Application", tasks: ["Tackle complex multi-step problems", "Study advanced frameworks and methodologies", "Publish work or create a portfolio piece", "Begin tracking performance metrics"] },
+                    { title: "4. Advanced Specialization", tasks: ["Focus on a high-value niche sector", "Optimize workflows and execution speed", "Network with senior professionals", "Implement custom real-world architecture"] },
+                    { title: "5. Professional Mastery", tasks: ["Prepare for technical/industry interviews", "Contribute to public knowledge", "Apply for junior/mid-level roles", "Continually audit new technology trends"] }
+                ];
+            }
+
+            let stepsHTML = ''; let totalTasks = 0;
+            syllabusData.forEach((step, idx) => {
+                const stepNum = idx + 1; totalTasks += step.tasks.length;
+                let tasksHTML = step.tasks.map(t => `<label class="task"><input type="checkbox" class="dyn-cb" onchange="updateDynamicProgress(${totalTasks})"><span class="task-text">${t}</span></label>`).join('');
+                stepsHTML += `
+                    <div class="step">
+                        <div class="step-number">${stepNum}</div>
+                        <div class="step-content">
+                            <div class="step-header" onclick="this.nextElementSibling.classList.toggle('active')"><div class="step-title">${step.title}</div><div style="color: #00f2fe; font-size: 0.8rem;">Expand ▼</div></div>
+                            <div class="step-body ${idx === 0 ? 'active' : ''}">${tasksHTML}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            zone.innerHTML = `
+                <h3 style="font-size: 1.8rem; margin-bottom: 30px; font-weight: 600; text-align: center;">Automated Syllabus Generated 🪄</h3>
+                <div class="progress-card">
+                    <div class="progress-header"><div class="progress-title">Curriculum Track: ${targetRole}</div><div class="percent" id="dyn-pct">0%</div></div>
+                    <div class="progress-bar-container"><div class="progress-bar-fill" id="dyn-bar" style="width: 0%;"></div></div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Mark checkboxes below to track your execution.</p>
+                </div>
+                <div class="roadmap-zone">${stepsHTML}</div>
+            `;
+        }
+
+        window.updateDynamicProgress = function(total) {
+            const checked = document.querySelectorAll('.dyn-cb:checked').length;
+            const pct = Math.round((checked / total) * 100);
+            document.getElementById('dyn-pct').innerText = pct + '%';
+            document.getElementById('dyn-bar').style.width = pct + '%';
+        }
+
+        // --- BRAND NEW LIVE GEMINI INTEGRATION ENGINE CAPSULE ---
+        function handleChatEnter(event) { if (event.key === 'Enter') { sendPromptToGeminiOracle(); } }
+
+        async function sendPromptToGeminiOracle() {
+            const keyVaultElement = document.getElementById('api-key-vault');
+            const promptInput = document.getElementById('chat-user-prompt');
+            const chatLogs = document.getElementById('chat-screen-logs');
+            const apiKey = keyVaultElement.value.trim();
+            const userText = promptInput.value.trim();
+
+            if (!userText) return;
+
+            chatLogs.innerHTML += `<div class="chat-bubble bubble-user">${userText}</div>`;
+            promptInput.value = "";
+            chatLogs.scrollTop = chatLogs.scrollHeight;
+
+            if (!apiKey) {
+                chatLogs.innerHTML += `<div class="chat-bubble bubble-bot" style="color: #ff5252; border-color: rgba(244,67,54,0.3);">⚠️ Security Warning: System requires an API Core token to operate. Please generate a free key inside Google AI Studio and paste it in the header vault slot above.</div>`;
+                chatLogs.scrollTop = chatLogs.scrollHeight;
+                return;
+            }
+
+            const loadingId = "loader-" + Date.now();
+            chatLogs.innerHTML += `<div class="chat-bubble bubble-bot" id="${loadingId}">🐧 Calculating response matrices via Gemini Engine arrays...</div>`;
+            chatLogs.scrollTop = chatLogs.scrollHeight;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: `You are the specialized AI Career Oracle for the website "Penguin Coder". Your focus is to evaluate job fields, tech competencies, academic paths, or competitive examinations (like UPSC, Bank PO, Gate, corporate software lines). Keep responses localized specifically to the Indian market ecosystem using ₹ Rupees or LPA standards. Keep formatting structured and answer in a highly encouraging, informative professional manner under 180 words. Question: ${userText}` }] }] })
+                });
+                const data = await response.json();
+                document.getElementById(loadingId).innerText = data.candidates[0].content.parts[0].text;
+            } catch (error) {
+                document.getElementById(loadingId).innerHTML = `<span style="color: #ff5252;">⚠️ Transmission Failed. Please re-validate the health status of your Google Studio Token configuration parameters.</span>`;
+            }
+            chatLogs.scrollTop = chatLogs.scrollHeight;
+        }
+
+        document.addEventListener("DOMContentLoaded", () => { drawSearchConsole(); });
+    </script>
+</body>
+</html>
